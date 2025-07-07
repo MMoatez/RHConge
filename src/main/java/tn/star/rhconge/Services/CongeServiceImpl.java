@@ -40,9 +40,7 @@ public class CongeServiceImpl implements CongeService {
         existingConge.setDateFin(congeDetails.getDateFin());
         existingConge.setType(congeDetails.getType());
 
-        if (congeDetails.getDemande() != null) {
-            existingConge.setDemande(congeDetails.getDemande());
-        }
+
 
         return congeRepository.save(existingConge);
     }

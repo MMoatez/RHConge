@@ -29,7 +29,6 @@ public class AutorisationServiceImpl implements AutorisationService {
                 .orElseThrow(() -> new RuntimeException("Autorisation non trouvée avec id = " + id));
 
         existing.setDateSortie(autorisation.getDateSortie());
-        existing.setDemande(autorisation.getDemande());
         existing.setMotif(autorisation.getMotif());
         existing.setDuree(autorisation.getDuree());
         existing.setDescription(autorisation.getDescription());
