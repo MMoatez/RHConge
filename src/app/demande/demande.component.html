@@ -1,0 +1,187 @@
+<div id="main-wrapper">
+  <main class="flex-grow-1">
+    <div class="container-fluid mt-4">
+      <div class="card shadow-lg border-0 rounded-lg">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h3 class="text-center font-weight-light my-4 mb-0">Mes Demandes</h3>
+          <button class="btn btn-outline-primary btn-sm" (click)="refreshDemandes()">
+            <i class="fas fa-sync-alt"></i> Actualiser
+          </button>
+        </div>
+        <div class="card-body">
+          
+          <!-- Message d'erreur -->
+          <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-triangle"></i> {{ errorMessage }}
+          </div>
+
+          <!-- Indicateur de chargement -->
+          <div *ngIf="isLoading" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+            <p class="mt-2">Chargement des demandes...</p>
+          </div>
+
+          <!-- Message si aucune demande -->
+          <div *ngIf="!isLoading && !errorMessage && demandes.length === 0" class="text-center py-4">
+            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">Aucune demande trouvée</h5>
+            <p class="text-muted">Vous n'avez encore soumis aucune demande de congé ou d'autorisation.</p>
+          </div>
+
+          <!-- Tableau des demandes -->
+          <div *ngIf="!isLoading && !errorMessage && demandes.length > 0" class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead class="table-light text-center">
+                <tr>
+                  <th>Type</th>
+                  <th>Date de début</th>
+                  <th>Date de fin</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody class="text-center">
+                <tr *ngFor="let demande of demandes; trackBy: trackByDemande">
+                  <td>
+                    <i class="fas fa-calendar-alt me-2 text-primary"></i>
+                    {{ demande.type }}
+                  </td>
+                  <td>{{ demande.dateDebut | date:'dd/MM/yyyy' }}</td>
+                  <td>{{ demande.dateFin | date:'dd/MM/yyyy' }}</td>
+                  <td>
+                    <span [ngClass]="getStatutClass(demande.statut)">
+                      {{ demande.statut }}
+                    </span>
+                  </td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-info" (click)="voirDetails(demande)" title="Voir tous les détails">
+                      <i class="fas fa-info-circle"></i> Détails complets
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Card de détails -->
+          <div *ngIf="showDetails && selectedDemande" id="details-card" class="card mt-4 border-info">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">
+                <i class="fas fa-info-circle me-2"></i>
+                Détails de la demande
+              </h5>
+              <button type="button" class="btn btn-sm btn-outline-light" (click)="fermerDetails()" title="Fermer">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <!-- Informations générales -->
+                <div class="col-md-6 mb-3">
+                  <h6 class="text-primary"><i class="fas fa-info-circle me-1"></i> Informations générales</h6>
+                  <table class="table table-borderless table-sm">
+                    <tr>
+                      <td class="fw-bold">Type :</td>
+                      <td>{{ selectedDemande.type }}</td>
+                    </tr>
+                    <tr>
+                      <td class="fw-bold">Statut :</td>
+                      <td>
+                        <span [ngClass]="getStatutClass(selectedDemande.statut)">
+                          {{ selectedDemande.statut }}
+                        </span>
+                      </td>
+                    </tr>
+           
+                    <tr *ngIf="selectedDemande.dateCreation">
+                      <td class="fw-bold">Date de création :</td>
+                      <td>{{ selectedDemande.dateCreation | date:'dd/MM/yyyy à HH:mm' }}</td>
+                    </tr>
+                  </table>
+                </div>
+
+                <!-- Détails spécifiques selon le type -->
+                <div class="col-md-6 mb-3">
+                  <!-- Détails pour les congés -->
+                  <div *ngIf="isCongeType(selectedDemande.type)">
+                    <h6 class="text-success"><i class="fas fa-calendar-alt me-1"></i> Détails du congé</h6>
+                    <table class="table table-borderless table-sm">
+                      <tr>
+                        <td class="fw-bold">Date de début :</td>
+                        <td>{{ selectedDemande.dateDebut | date:'dd/MM/yyyy' }}</td>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold">Date de fin :</td>
+                        <td>{{ selectedDemande.dateFin | date:'dd/MM/yyyy' }}</td>
+                      </tr>
+                      <tr *ngIf="selectedDemande.nombreJours">
+                        <td class="fw-bold">Nombre de jours :</td>
+                        <td>{{ selectedDemande.nombreJours }} jour(s)</td>
+                      </tr>
+                      <tr *ngIf="selectedDemande.typeConge">
+                        <td class="fw-bold">Type de congé :</td>
+                        <td>{{ selectedDemande.typeConge }}</td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <!-- Détails pour les autorisations -->
+                  <div *ngIf="isAutorisationType(selectedDemande.type)">
+                    <h6 class="text-warning"><i class="fas fa-clock me-1"></i> Détails de l'autorisation</h6>
+                    <table class="table table-borderless table-sm">
+                      <tr *ngIf="selectedDemande.dateSortie">
+                        <td class="fw-bold">Date de sortie :</td>
+                        <td>{{ selectedDemande.dateSortie | date:'dd/MM/yyyy' }}</td>
+                      </tr>
+                      <tr *ngIf="selectedDemande.heureSortie">
+                        <td class="fw-bold">Heure de sortie :</td>
+                        <td>{{ selectedDemande.heureSortie }}</td>
+                      </tr>
+                      <tr *ngIf="selectedDemande.duree">
+                        <td class="fw-bold">Durée :</td>
+                        <td>{{ selectedDemande.duree }}</td>
+                      </tr>
+                      <tr *ngIf="selectedDemande.description">
+                        <td class="fw-bold">Description :</td>
+                        <td>{{ selectedDemande.description }}</td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <!-- Détails génériques pour autres types -->
+                  <div *ngIf="!isCongeType(selectedDemande.type) && !isAutorisationType(selectedDemande.type)">
+                    <h6 class="text-secondary"><i class="fas fa-list me-1"></i> Détails de la demande</h6>
+                    <table class="table table-borderless table-sm">
+                      <tr>
+                        <td class="fw-bold">Date de début :</td>
+                        <td>{{ selectedDemande.dateDebut | date:'dd/MM/yyyy' }}</td>
+                      </tr>
+                      <tr *ngIf="selectedDemande.dateFin">
+                        <td class="fw-bold">Date de fin :</td>
+                        <td>{{ selectedDemande.dateFin | date:'dd/MM/yyyy' }}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Motif (commun à tous les types) -->
+              <div *ngIf="selectedDemande.motif" class="row">
+                <div class="col-12">
+                  <h6 class="text-primary"><i class="fas fa-comment me-1"></i> Motif</h6>
+                  <div class="alert alert-light border-start border-primary border-4">
+                    {{ selectedDemande.motif }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <app-footer></app-footer>
+</div>

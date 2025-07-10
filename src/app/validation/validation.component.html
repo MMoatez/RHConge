@@ -1,0 +1,72 @@
+<div id="main-wrapper">
+  <main class="flex-grow-1">
+    <div class="container-fluid mt-4">
+      <div class="card shadow-lg border-0 rounded-lg">
+        <div class="card-header">
+          <h3 class="text-center font-weight-light my-4">Liste des demandes à valider</h3>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead class="table-light text-center">
+                <tr>
+                  <th>Nom</th>
+                  <th>Type</th>
+                  <th>Durée</th>
+                  <th>Statut</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody class="text-center">
+                <tr *ngFor="let demande of demandes">
+                  <td>{{ demande.nom }}</td>
+                  <td>{{ demande.type }}</td>
+                  <td>{{ demande.duree }}</td>
+                  <td>
+                    <span [ngClass]="{
+                      'badge bg-warning text-dark': demande.statut === 'En cours',
+                      'badge bg-success': demande.statut === 'Acceptée',
+                      'badge bg-danger': demande.statut === 'Rejetée'
+                    }">
+                      {{ demande.statut }}
+                    </span>
+                  </td>
+                  <td>
+                    <button *ngIf="demande.statut === 'En cours'" class="btn btn-sm btn-primary"
+                            (click)="openDetails(demande)">
+                      Détails
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <app-footer></app-footer>
+</div>
+
+<!-- ✅ Modal pour valider ou rejeter -->
+<div *ngIf="selectedDemande" class="modal fade show d-block bg-dark bg-opacity-50" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Valider ou rejeter la demande</h5>
+        <button type="button" class="btn-close" (click)="selectedDemande = null"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Nom :</strong> {{ selectedDemande.nom }}</p>
+        <p><strong>Type :</strong> {{ selectedDemande.type }}</p>
+        <p><strong>Durée :</strong> {{ selectedDemande.duree }}</p>
+        <textarea class="form-control" [(ngModel)]="description" placeholder="Ajouter une remarque..." rows="3"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" (click)="validerDemande()">Accepter</button>
+        <button class="btn btn-danger" (click)="rejeterDemande()">Rejeter</button>
+      </div>
+    </div>
+  </div>
+</div>

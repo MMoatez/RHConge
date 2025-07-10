@@ -1,0 +1,311 @@
+<!-- Sidebar -->
+<div id="layoutSidenav_nav">
+  <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+    <div class="sb-sidenav-menu">
+      <div class="nav">
+        <div class="sb-sidenav-menu-heading">Core</div>
+
+        <!--  <a class="nav-link" routerLink="/"> -->
+        <a class="nav-link" routerLink="/home">
+          <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+          Home
+        </a>
+        <a class="nav-link" routerLink="/demande">
+          <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+          Demande
+        </a>
+        <a class="nav-link" routerLink="/validation">
+          <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+          Validation
+        </a>
+
+        <div class="sb-sidenav-menu-heading">Interface</div>
+        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages">
+          <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+          Pages
+          <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+        </a>
+        <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+          <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+            <a class="nav-link collapsed" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth">
+              Authentication
+              <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+            </a>
+            <div class="collapse" id="pagesCollapseAuth" data-bs-parent="#sidenavAccordionPages">
+              <nav class="sb-sidenav-menu-nested nav">
+                <a class="nav-link" routerLink="/login">Login</a>
+                <a class="nav-link" routerLink="/register">Register</a>
+              </nav>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- Content -->
+<div id="layoutSidenav_content">
+  <main>
+    <div class="container-fluid mt-4">
+      <div class="card shadow-lg border-0 rounded-lg">
+        <div class="card-header">
+          <h3 class="text-center font-weight-light my-4">Bienvenue sur votre espace RH</h3>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <!-- Image -->
+            <div class="col-md-12 col-xl-8 mb-4">
+              <div class="auth-header text-center">
+                <img src="assets/images/conge.jpeg" alt="logo" style="max-width: 100%; border-radius: 10px;" />
+              </div>
+            </div>
+
+            <!-- Résumé des congés -->
+            <div class="col-md-12 col-xl-4">
+              <h5 class="mb-3">Résumé des congés - {{ userDisplayName }}</h5>
+              <div class="p-3" style="background-color: #f8f9fa; border-radius: 10px;">
+                <div class="mb-2"><strong>NB Congé pris :</strong> <span class="text-success">{{ congesInfo.congesPris }}J</span></div>
+                <div class="mb-2"><strong>NB Congé restant :</strong> <span class="text-success">{{ congesInfo.congesRestants }}J</span></div>
+                <div class="mb-2"><strong>NB Congé de l'année précédente :</strong> <span class="text-success">{{ congesInfo.congesAnnuelsRestants }}J</span></div>
+              </div>
+              
+           <br>
+
+                <style>
+                  .btn-vert {
+                    background-color: #28a745; /* Vert */
+                    color: white;
+                    padding: 5px 10px; /* Plus petit */
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-size: 14px;
+                    margin-right: 10px;
+                  }
+
+                  .btn-vert:hover {
+                    background-color: #218838;
+                  }
+
+                  .btn-container {
+                    display: flex; /* Affichage en ligne */
+                    align-items: center;
+                    gap: 20px;
+                  }
+                </style>
+
+
+              <h5 class="mb-3">Faire une demande</h5>
+              <div class="p-3" style="background-color: #f8f9fa; border-radius: 10px;">
+                <div class="btn-container">
+                  <button class="btn-vert" (click)="showCongeFormulaire()">Congé</button>
+                  <button class="btn-vert" (click)="showAutorisationFormulaire()">Autorisation</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Formulaire de demande de congé -->
+          <div class="row mt-4" *ngIf="showCongeForm">
+            <div class="col-12">
+              <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <h4 class="text-center font-weight-light my-2">Demande de Congé</h4>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" (click)="hideAllForms()">
+                    <i class="fas fa-times"></i> Fermer
+                  </button>
+                </div>
+                <div class="card-body">
+                  <form (ngSubmit)="onSubmitConge()" #congeFormRef="ngForm">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                          <input 
+                            class="form-control" 
+                            id="dateDebut" 
+                            type="date" 
+                            [(ngModel)]="congeForm.dateDebut"
+                            name="dateDebut"
+                            required
+                            (change)="onDateChange()" />
+                          <label for="dateDebut">Date de début</label>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                          <input 
+                            class="form-control" 
+                            id="dateFin" 
+                            type="date" 
+                            [(ngModel)]="congeForm.dateFin"
+                            name="dateFin"
+                            required
+                            (change)="onDateChange()" />
+                          <label for="dateFin">Date de fin</label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                          <select 
+                            class="form-control" 
+                            id="typeConge"
+                            [(ngModel)]="congeForm.typeConge"
+                            name="typeConge"
+                            required>
+                            <option value="repos">Congé de repos</option>
+                            <option value="mariage agent">Mariage de l'agent</option>
+                            <option value="circoncision">Circoncision</option>
+                            <option value="mariage enfant">Mariage d'un enfant</option>
+                            <option value="deces parents">Décès des parents</option>
+                            <option value="deces conjoint enfant">Décès conjoint/enfant</option>
+                            <option value="deces autre">Décès autre</option>
+                          </select>
+                          <label for="typeConge">Type de congé</label>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                          <input 
+                            class="form-control" 
+                            id="nombreJours" 
+                            type="number" 
+                            [value]="congeForm.nombreJours"
+                            readonly />
+                          <label for="nombreJours">Nombre de jours</label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                      <textarea 
+                        class="form-control" 
+                        id="motif" 
+                        style="height: 100px"
+                        [(ngModel)]="congeForm.motif"
+                        name="motif"
+                        placeholder="Motif de la demande..."></textarea>
+                      <label for="motif">Motif (optionnel)</label>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                      <button type="button" class="btn btn-secondary" (click)="hideAllForms()">
+                        Annuler
+                      </button>
+                      <button type="submit" class="btn btn-success" [disabled]="!congeFormRef.form.valid">
+                        <i class="fas fa-paper-plane"></i> Soumettre la demande
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Formulaire d'autorisation -->
+          <div class="row mt-4" *ngIf="showAutorisationForm">
+            <div class="col-12">
+              <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <h4 class="text-center font-weight-light my-2">Demande d'Autorisation de Sortie</h4>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" (click)="hideAllForms()">
+                    <i class="fas fa-times"></i> Fermer
+                  </button>
+                </div>
+                <div class="card-body">
+                  <form (ngSubmit)="onSubmitAutorisation()" #autorisationFormRef="ngForm">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                          <input 
+                            class="form-control" 
+                            id="dateSortie" 
+                            type="date" 
+                            [(ngModel)]="autorisationForm.dateSortie"
+                            name="dateSortie"
+                            required />
+                          <label for="dateSortie">Date de sortie</label>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                          <input 
+                            class="form-control" 
+                            id="heureSortie" 
+                            type="time" 
+                            [(ngModel)]="autorisationForm.heureSortie"
+                            name="heureSortie"
+                            required />
+                          <label for="heureSortie">Heure de sortie</label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                          <select 
+                            class="form-control" 
+                            id="duree"
+                            [(ngModel)]="autorisationForm.duree"
+                            name="duree"
+                            required>
+                            <option value="">Sélectionnez la durée</option>
+                            <option value="1h">1 heure</option>
+                            <option value="2h">2 heures</option>
+                            <option value="3h">3 heures</option>
+                            <option value="4h">4 heures</option>
+                            <option value="demi-journee">Demi-journée</option>
+                          </select>
+                          <label for="duree">Durée</label>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                          <input 
+                            class="form-control" 
+                            id="motifAutorisation" 
+                            type="text" 
+                            [(ngModel)]="autorisationForm.motif"
+                            name="motifAutorisation"
+                            placeholder="Ex: Rendez-vous médical"
+                            required />
+                          <label for="motifAutorisation">Motif</label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                      <textarea 
+                        class="form-control" 
+                        id="description" 
+                        style="height: 100px"
+                        [(ngModel)]="autorisationForm.description"
+                        name="description"
+                        placeholder="Détails supplémentaires..."></textarea>
+                      <label for="description">Description (optionnel)</label>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                      <button type="button" class="btn btn-secondary" (click)="hideAllForms()">
+                        Annuler
+                      </button>
+                      <button type="submit" class="btn btn-success" [disabled]="!autorisationFormRef.form.valid">
+                        <i class="fas fa-paper-plane"></i> Soumettre la demande
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+  <app-footer></app-footer>
+</div>
