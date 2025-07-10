@@ -41,4 +41,10 @@ public class DemandeController {
     public void delete(@PathVariable int id) {
         demandeService.deleteDemande(id);
     }
+
+    @GetMapping("/user/{matricule}")
+    public ResponseEntity<List<Demande>> getDemandesByUser(@PathVariable int matricule) {
+        List<Demande> demandes = demandeService.getDemandesByMatricule(matricule);
+        return ResponseEntity.ok(demandes);
+    }
 }

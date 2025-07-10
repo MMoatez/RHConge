@@ -7,40 +7,20 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-
 public class Status {
+
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String nom;
 
-    @OneToOne(mappedBy = "status")
-    private Demande demande;
+    // Getters and Setters
+    public int getId() { return id; }
 
-    // Getters et setters
+    public void setId(int id) { this.id = id; }
 
-    public int getId() {
-        return id;
-    }
+    public String getNom() { return nom; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getNom() {
-        return nom;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public Demande getDemande() {
-        return demande;
-    }
-
-    public void setDemande(Demande demande) {
-        this.demande = demande;
-    }
+    public void setNom(String nom) { this.nom = nom; }
 }

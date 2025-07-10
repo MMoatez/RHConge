@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface CongeService {
 
-    Conge saveConge(Conge conge);
+    Conge saveConge(Conge conge, int matricule);
     List<Conge> getAllConges();
     Conge getCongeById(int id);
     Conge updateConge(int id, Conge conge);

@@ -1,85 +1,46 @@
 package tn.star.rhconge.Entities;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
-
 public class Autorisation {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // ID auto-incrémenté
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne
-    @JoinColumn(name = "id_demande", referencedColumnName = "id") //, nullable = false, unique = true
-    private Demande demande;
-
-    private String motif;   //non enum
+    private String motif;
 
     private LocalDateTime dateSortie;
 
     private String duree;
 
-
     private String description;
 
+    // Getters and Setters
+    public int getId() { return id; }
 
+    public void setId(int id) { this.id = id; }
 
+    public String getMotif() { return motif; }
 
-    // Getters et Setters
+    public void setMotif(String motif) { this.motif = motif; }
 
-    public int getId() {
-        return id;
-    }
+    public LocalDateTime getDateSortie() { return dateSortie; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public void setDateSortie(LocalDateTime dateSortie) { this.dateSortie = dateSortie; }
 
-    public Demande getDemande() {
-        return demande;
-    }
+    public String getDuree() { return duree; }
 
-    public void setDemande(Demande demande) {
-        this.demande = demande;
-    }
+    public void setDuree(String duree) { this.duree = duree; }
 
-    public String getMotif() {
-        return motif;
-    }
+    public String getDescription() { return description; }
 
-    public void setMotif(String motif) {
-        this.motif = motif;
-    }
-
-    public LocalDateTime getDateSortie() {
-        return dateSortie;
-    }
-
-    public void setDateSortie(LocalDateTime dateSortie) {
-        this.dateSortie = dateSortie;
-    }
-
-    public String getDuree() {
-        return duree;
-    }
-
-    public void setDuree(String duree) {
-        this.duree = duree;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
+    public void setDescription(String description) { this.description = description; }
 }

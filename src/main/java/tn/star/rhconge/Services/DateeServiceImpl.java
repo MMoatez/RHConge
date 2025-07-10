@@ -18,6 +18,7 @@ public class DateeServiceImpl implements DateeService {
         this.dateeRepository = dateeRepository;
     }
 
+
     @Override
     public Datee saveDatee(Datee datee) {
         return dateeRepository.save(datee);
@@ -36,17 +37,20 @@ public class DateeServiceImpl implements DateeService {
 
     @Override
     public Datee updateDatee(int id, Datee updatedDatee) {
-        Datee datee = getDateeById(id);
-        datee.setDate(updatedDatee.getDate());
-        datee.setMatin(updatedDatee.isMatin());
-        datee.setApresMidi(updatedDatee.isApresMidi());
-        datee.setConge(updatedDatee.getConge());
+        Datee existing = getDateeById(id);
 
-        return dateeRepository.save(datee);
+        existing.setDate(updatedDatee.getDate());
+        existing.setMatin(updatedDatee.isMatin());
+        existing.setApresMidi(updatedDatee.isApresMidi());
+
+        return dateeRepository.save(existing);
     }
 
     @Override
     public void deleteDatee(int id) {
+        if (!dateeRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Datee not found with id: " + id);
+        }
         dateeRepository.deleteById(id);
     }
 }

@@ -26,9 +26,12 @@ public class CongeController {
         return ResponseEntity.ok(conge);
     }
 
-    @PostMapping
-    public Conge createConge(@RequestBody Conge conge) {
-        return congeService.saveConge(conge);
+
+
+    @PostMapping("/{matricule}")
+    public ResponseEntity<Conge> addConge(@RequestBody Conge conge, @PathVariable int matricule) {
+        Conge saved = congeService.saveConge(conge, matricule);
+        return ResponseEntity.ok(saved);
     }
 
     @PutMapping("/{id}")

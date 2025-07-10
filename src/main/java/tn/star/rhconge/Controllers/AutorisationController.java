@@ -25,11 +25,11 @@ public class AutorisationController {
         return ResponseEntity.ok(autorisationService.getAutorisationById(id));
     }
 
-    @PostMapping
-    public Autorisation create(@RequestBody Autorisation autorisation) {
-        return autorisationService.saveAutorisation(autorisation);
+    @PostMapping("/{matricule}")
+    public ResponseEntity<Autorisation> addAutorisation(@RequestBody Autorisation autorisation, @PathVariable int matricule) {
+        Autorisation saved = autorisationService.saveAutorisation(autorisation, matricule);
+        return ResponseEntity.ok(saved);
     }
-
     @PutMapping("/{id}")
     public Autorisation update(@PathVariable int id, @RequestBody Autorisation autorisation) {
         return autorisationService.updateAutorisation(id, autorisation);

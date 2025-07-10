@@ -65,4 +65,9 @@ public class DemandeServiceImpl implements DemandeService {
     public void deleteDemande(int id) {
         demandeRepository.deleteById(id);
     }
+    @Override
+    public List<Demande> getDemandesByMatricule(int matricule) {
+        return demandeRepository.findByMatriculeDemandeur_Matricule(matricule);
+    }
+
 }

@@ -10,4 +10,6 @@ public interface DemandeService {
     Optional<Demande> getDemandeById(int id);
     Demande updateDemande(int id, Demande demande);
     void deleteDemande(int id);
+    List<Demande> getDemandesByMatricule(int matricule);
+
 }
