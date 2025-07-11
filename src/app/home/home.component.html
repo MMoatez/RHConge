@@ -119,6 +119,7 @@
                 <div class="card-body">
                   <form (ngSubmit)="onSubmitConge()" #congeFormRef="ngForm">
                     <div class="row">
+                      
                       <div class="col-md-6">
                         <div class="form-floating mb-3">
                           <input 
@@ -127,11 +128,18 @@
                             type="date" 
                             [(ngModel)]="congeForm.dateDebut"
                             name="dateDebut"
+                            [min]="minDate"
                             required
                             (change)="onDateChange()" />
                           <label for="dateDebut">Date de début</label>
                         </div>
                       </div>
+
+                      
+
+
+                      
+
                       <div class="col-md-6">
                         <div class="form-floating mb-3">
                           <input 
@@ -146,6 +154,37 @@
                         </div>
                       </div>
                     </div>
+
+
+                    <div class="row mb-3 ms-1">
+                      <!-- Heures de début -->
+                      <div class="col-md-6 d-flex align-items-center">
+                        <label class="form-label me-3 mb-0">Heures de début :</label>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="checkbox" id="debutMatin" [(ngModel)]="congeForm.dateDebutMatin" name="debutMatin">
+                          <label class="form-check-label" for="debutMatin">Matin</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="checkbox" id="debutApresMidi" [(ngModel)]="congeForm.dateDebutApresMidi" name="debutApresMidi">
+                          <label class="form-check-label" for="debutApresMidi">Après-midi</label>
+                        </div>
+                      </div>
+
+                      <!-- Heures de fin -->
+                      <div class="col-md-6 d-flex align-items-center">
+                        <label class="form-label me-3 mb-0">Heures de fin :</label>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="checkbox" id="finMatin" [(ngModel)]="congeForm.dateFinMatin" name="finMatin">
+                          <label class="form-check-label" for="finMatin">Matin</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="checkbox" id="finApresMidi" [(ngModel)]="congeForm.dateFinApresMidi" name="finApresMidi">
+                          <label class="form-check-label" for="finApresMidi">Après-midi</label>
+                        </div>
+                      </div>
+                    </div>
+
+
                     
                     <div class="row">
                       <div class="col-md-6">
@@ -180,6 +219,7 @@
                       </div>
                     </div>
 
+                    <!--
                     <div class="form-floating mb-3">
                       <textarea 
                         class="form-control" 
@@ -188,14 +228,14 @@
                         [(ngModel)]="congeForm.motif"
                         name="motif"
                         placeholder="Motif de la demande..."></textarea>
-                      <label for="motif">Motif (optionnel)</label>
-                    </div>
+                      <label for="motif">Description (optionnel)</label>
+                    </div>  -->
 
                     <div class="d-flex justify-content-between">
                       <button type="button" class="btn btn-secondary" (click)="hideAllForms()">
                         Annuler
                       </button>
-                      <button type="submit" class="btn btn-success" [disabled]="!congeFormRef.form.valid">
+                      <button type="submit" class="btn btn-success" [disabled]="!congeFormRef.form.valid || !isDebutChecked() || !isFinChecked() ">
                         <i class="fas fa-paper-plane"></i> Soumettre la demande
                       </button>
                     </div>
@@ -218,6 +258,7 @@
                 <div class="card-body">
                   <form (ngSubmit)="onSubmitAutorisation()" #autorisationFormRef="ngForm">
                     <div class="row">
+
                       <div class="col-md-6">
                         <div class="form-floating mb-3">
                           <input 
@@ -226,10 +267,13 @@
                             type="date" 
                             [(ngModel)]="autorisationForm.dateSortie"
                             name="dateSortie"
+                            [min]="minDate"
                             required />
                           <label for="dateSortie">Date de sortie</label>
                         </div>
                       </div>
+
+
                       <div class="col-md-6">
                         <div class="form-floating mb-3">
                           <input 
@@ -265,15 +309,19 @@
                       </div>
                       <div class="col-md-6">
                         <div class="form-floating mb-3">
-                          <input 
-                            class="form-control" 
-                            id="motifAutorisation" 
-                            type="text" 
+
+                          <select 
+                            class="form-control"
+                            id="motifAutorisation"
                             [(ngModel)]="autorisationForm.motif"
                             name="motifAutorisation"
-                            placeholder="Ex: Rendez-vous médical"
-                            required />
+                            required>
+                            <option value="">Sélectionnez un motif</option>
+                            <option value="Personnel">Personnel</option>
+                            <option value="Service">Service</option>
+                          </select>
                           <label for="motifAutorisation">Motif</label>
+
                         </div>
                       </div>
                     </div>
@@ -307,5 +355,9 @@
       </div>
     </div>
   </main>
-  <app-footer></app-footer>
+
+  <div class="footer-min" id="footer-min">
+    <app-footer></app-footer>
+
+  </div>
 </div>

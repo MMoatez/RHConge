@@ -67,4 +67,14 @@ export class DemandeService {
   getDemandeById(id: number): Observable<Demande> {
     return this.http.get<Demande>(`${this.baseUrl}/${id}`);
   }
+
+  deleteDemande(id: number): Observable<void> {
+  return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  updateDemande(id: number, demande: Demande): Observable<Demande> {
+  return this.http.put<Demande>(`${this.baseUrl}/${id}`, demande);
+  }
+
+
 }

@@ -50,16 +50,53 @@
                   </td>
                   <td>{{ demande.dateDebut | date:'dd/MM/yyyy' }}</td>
                   <td>{{ demande.dateFin | date:'dd/MM/yyyy' }}</td>
-                  <td>
-                    <span [ngClass]="getStatutClass(demande.statut)">
+
+                  <td class="align-middle text-center">
+                    <span class="badge px-2 py-1 small" [ngClass]="getStatutClass(demande.statut)">
+                      <i *ngIf="demande.statut === 'APPROUVE'" class="fas fa-check-circle me-1"></i>
+                      <i *ngIf="demande.statut === 'REJETE'" class="fas fa-times-circle me-1"></i>
+                      <i *ngIf="demande.statut === 'EN_ATTENTE'" class="fas fa-hourglass-half me-1"></i>
                       {{ demande.statut }}
                     </span>
                   </td>
+
+
+
+
+                  <!--
                   <td>
                     <button class="btn btn-sm btn-outline-info" (click)="voirDetails(demande)" title="Voir tous les détails">
                       <i class="fas fa-info-circle"></i> Détails complets
                     </button>
+                  </td> -->
+
+                  <td>
+                    <!-- Détails -->
+                    <button class="btn btn-sm btn-outline-info me-1"
+                            (click)="voirDetails(demande)"
+                            title="Voir tous les détails">
+                      <i class="fas fa-info-circle"></i>
+                    </button>
+
+                    <!-- Modifier (visible seulement si statut EN_ATTENTE) 
+                    <button *ngIf="demande.statut === 'EN_ATTENTE'" 
+                            class="btn btn-sm btn-outline-warning me-1"
+                            (click)="modifierDemande(demande)"
+                            title="Modifier cette demande">
+                      <i class="fas fa-edit"></i>
+                    </button>-->
+
+                    <!-- Supprimer (visible seulement si statut EN_ATTENTE) -->
+                    <button *ngIf="demande.statut === 'EN_ATTENTE'" 
+                            class="btn btn-sm btn-outline-danger"
+                            (click)="supprimerDemande(demande)"
+                            title="Supprimer cette demande">
+                      <i class="fas fa-trash-alt"></i>
+                    </button> 
                   </td>
+
+
+
                 </tr>
               </tbody>
             </table>
@@ -88,11 +125,17 @@
                     </tr>
                     <tr>
                       <td class="fw-bold">Statut :</td>
-                      <td>
-                        <span [ngClass]="getStatutClass(selectedDemande.statut)">
+
+                      <td class="">
+                        <span class="badge px-2 py-1 small" [ngClass]="getStatutClass(selectedDemande.statut)">
+                          <i *ngIf="selectedDemande.statut === 'APPROUVE'" class="fas fa-check-circle me-1"></i>
+                          <i *ngIf="selectedDemande.statut === 'REJETE'" class="fas fa-times-circle me-1"></i>
+                          <i *ngIf="selectedDemande.statut === 'EN_ATTENTE'" class="fas fa-hourglass-half me-1"></i>
                           {{ selectedDemande.statut }}
                         </span>
                       </td>
+
+
                     </tr>
            
                     <tr *ngIf="selectedDemande.dateCreation">

@@ -13,6 +13,7 @@ export class DemandeComponent implements OnInit {
   errorMessage: string = '';
   selectedDemande: Demande | null = null;
   showDetails: boolean = false;
+  
 
   constructor(
     private demandeService: DemandeService,
@@ -174,7 +175,7 @@ export class DemandeComponent implements OnInit {
       return dateString;
     }
   }
-
+/*
   getStatutClass(statut: string | undefined): string {
     if (!statut) return 'badge bg-secondary';
     
@@ -194,7 +195,7 @@ export class DemandeComponent implements OnInit {
       default:
         return 'badge bg-secondary';
     }
-  }
+  }*/
 
   refreshDemandes(): void {
     this.loadDemandes();
@@ -203,4 +204,46 @@ export class DemandeComponent implements OnInit {
   trackByDemande(index: number, demande: Demande): any {
     return demande.id || index;
   }
+
+  
+
+  supprimerDemande(demande: Demande): void {
+  if (!demande || !demande.id) return;
+
+  if (confirm('Êtes-vous sûr de vouloir supprimer cette demande ?')) {
+    this.demandeService.deleteDemande(demande.id).subscribe({
+      next: () => this.refreshDemandes(),
+      error: (err) => {
+        console.error(err);
+        this.errorMessage = "Erreur lors de la suppression de la demande.";
+      }
+    });
+  }
+}
+
+getStatutClass(statut: string | undefined): string {
+  if (!statut) return 'bg-secondary text-white';
+
+  switch (statut.toUpperCase()) {
+    case 'EN_ATTENTE':
+    case 'EN COURS':
+    case 'PENDING':
+      return 'bg-warning text-dark'; // Jaune
+    case 'APPROUVE':
+    case 'ACCEPTE':
+    case 'ACCEPTÉ':
+    case 'APPROUVÉ':
+      return 'bg-success text-white'; // Vert
+    case 'REJETE':
+    case 'REJETÉ':
+    case 'REFUSE':
+      return 'bg-danger text-white'; // Rouge
+    default:
+      return 'bg-secondary text-white'; // Gris
+  }
+}
+
+
+
+
 }
