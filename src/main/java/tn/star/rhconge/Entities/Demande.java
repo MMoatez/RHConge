@@ -15,15 +15,15 @@ public class Demande {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REMOVE) //cascade = CascadeType.ALL
     @JoinColumn(name = "id_autorisation", referencedColumnName = "id")
     private Autorisation autorisation;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REMOVE)  //cascade = CascadeType.ALL
     @JoinColumn(name = "id_conge", referencedColumnName = "id")
     private Conge conge;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "status", referencedColumnName = "id")
     private Status status;
 

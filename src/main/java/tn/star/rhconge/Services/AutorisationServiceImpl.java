@@ -35,7 +35,7 @@ public class AutorisationServiceImpl implements AutorisationService {
 
         // 2. Récupérer le statut "En attente"
         Status status = statusRepository.findByNom("EN_ATTENTE")
-                .orElseThrow(() -> new RuntimeException("Statut 'En attente' non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Statut 'EN_ATTENTE' non trouvé"));
 
         // 3. Récupérer l'utilisateur (demandeur)
         User demandeur = userRepository.findByMatricule(matricule)
