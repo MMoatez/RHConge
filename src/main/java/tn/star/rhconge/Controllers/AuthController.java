@@ -28,9 +28,9 @@ public class AuthController {
         }
 
         // ✅ Vérifier que l'e-mail se termine par @star.com.tn
-        if (!email.toLowerCase().endsWith("@star.com.tn")) {
-            return ResponseEntity.status(403).body(Map.of("error", "Veuillez vous connecter avec un Compte Gmail STAR."));
-        }
+     /*   if (!email.toLowerCase().endsWith("@star.com.tn")) {
+            return ResponseEntity.status(403).body(Map.of("error", "Email ou mot de passe incorrect."));
+        }*/
 
         // 🔐 Vérifier que le mot de passe est fourni
         if (password == null || password.isBlank()) {

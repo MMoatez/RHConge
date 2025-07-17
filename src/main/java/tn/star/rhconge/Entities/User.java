@@ -30,6 +30,9 @@ public class User {
 
     private int congesAnnuelsRestants;
 
+    private int hAutorisation; // En minutes
+
+
 
     @ManyToOne
     private User manager;
@@ -114,6 +117,15 @@ public class User {
     public void setCongesAnnuelsRestants(int congesAnnuelsRestants) {
         this.congesAnnuelsRestants = congesAnnuelsRestants;
     }
+
+    public int getHAutorisation() {
+        return hAutorisation;
+    }
+
+    public void setHAutorisation(int hAutorisation) {
+        this.hAutorisation = hAutorisation;
+    }
+
 
     public User getManager() {
         return manager;

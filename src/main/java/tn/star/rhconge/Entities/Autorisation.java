@@ -19,7 +19,7 @@ public class Autorisation {
 
     private LocalDateTime dateSortie;
 
-    private String duree;
+    private int duree;
 
     private String description;
 
@@ -36,9 +36,9 @@ public class Autorisation {
 
     public void setDateSortie(LocalDateTime dateSortie) { this.dateSortie = dateSortie; }
 
-    public String getDuree() { return duree; }
+    public int getDuree() { return duree; }
 
-    public void setDuree(String duree) { this.duree = duree; }
+    public void setDuree(int duree) { this.duree = duree; }
 
     public String getDescription() { return description; }
 

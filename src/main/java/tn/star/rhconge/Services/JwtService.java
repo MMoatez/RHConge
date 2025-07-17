@@ -33,6 +33,7 @@ public class JwtService {
       claims.put("congesRestants", user.getCongesRestants());
       claims.put("congesPris", user.getCongesPris());
       claims.put("congesAnnuelsRestants", user.getCongesAnnuelsRestants());
+      claims.put("hAutorisation", user.getHAutorisation());
 
       if (user.getManager() != null) {
           claims.put("manager", Map.of(

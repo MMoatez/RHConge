@@ -26,8 +26,13 @@ public class Validation {
     @ManyToOne
     @JoinColumn(name = "id_demande", referencedColumnName = "id")
     private Demande idDemande;
-
+/*
     @OneToOne
+    @JoinColumn(name = "matricule_validateur", referencedColumnName = "matricule")
+    private User matriculeValidateur;
+*/
+
+    @ManyToOne
     @JoinColumn(name = "matricule_validateur", referencedColumnName = "matricule")
     private User matriculeValidateur;
 
