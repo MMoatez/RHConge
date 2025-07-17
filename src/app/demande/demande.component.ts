@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DemandeService, Demande } from '../services/demande.service';
 import { AuthService } from '../services/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-demande',
@@ -29,8 +30,9 @@ export class DemandeComponent implements OnInit {
     const matricule = this.authService.getUserMatricule();
     
     if (!matricule) {
-      this.errorMessage = 'Erreur: Matricule utilisateur non trouvé. Veuillez vous reconnecter.';
-      return;
+      Swal.fire('Erreur', 'Matricule utilisateur non trouvé. Veuillez vous reconnecter.', 'error');
+return;
+
     }
 
     this.isLoading = true;
@@ -46,8 +48,13 @@ export class DemandeComponent implements OnInit {
       },
       error: (error) => {
         console.error('Erreur lors du chargement des demandes:', error);
-        this.errorMessage = 'Erreur lors du chargement des demandes. Veuillez réessayer.';
-        this.isLoading = false;
+      this.isLoading = false;
+      Swal.fire(
+        'Erreur',
+        error?.error?.message || 'Erreur lors du chargement des demandes. Veuillez réessayer.',
+        'error'
+      );
+
       }
     });
   }
@@ -208,18 +215,34 @@ export class DemandeComponent implements OnInit {
   
 
   supprimerDemande(demande: Demande): void {
-  if (!demande || !demande.id) return;
+  if (!demande || demande.id == null) return;
 
-  if (confirm('Êtes-vous sûr de vouloir supprimer cette demande ?')) {
-    this.demandeService.deleteDemande(demande.id).subscribe({
-      next: () => this.refreshDemandes(),
-      error: (err) => {
-        console.error(err);
-        this.errorMessage = "Erreur lors de la suppression de la demande.";
-      }
-    });
-  }
+  Swal.fire({
+    title: 'Êtes-vous sûr ?',
+    text: "Cette action est irréversible !",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Oui, supprimer',
+    cancelButtonText: 'Annuler'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.demandeService.deleteDemande(demande.id!).subscribe({
+        next: () => {
+          this.refreshDemandes();
+          Swal.fire('Supprimé !', 'La demande a été supprimée.', 'success');
+        },
+        error: (err) => {
+          console.error(err);
+          this.errorMessage = "Erreur lors de la suppression de la demande.";
+          Swal.fire('Erreur !', 'Impossible de supprimer la demande.', 'error');
+        }
+      });
+    }
+  });
 }
+
 
 getStatutClass(statut: string | undefined): string {
   if (!statut) return 'bg-secondary text-white';

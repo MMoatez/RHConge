@@ -50,8 +50,18 @@ export class HomeComponent implements OnInit {
   this.minDate = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
 
   // J Congés
-  this.congesInfo = this.authService.getCongesInfo();
+    this.congesInfo = this.authService.getCongesInfo();
     this.userDisplayName = this.authService.getUserDisplayName();
+
+    // Calculer le total des congés restants (année précédente + actuelle)
+    //this.congesInfo.totalCongesRestants = (this.congesInfo.congesAnnuelsRestants || 0) + (this.congesInfo.congesRestants || 0);
+    this.congesInfo.totalCongesRestants = this.congesInfo.congesRestants || 0;
+
+
+      console.log('Infos congés:', this.congesInfo); // <== Vérifie que hAutorisation est bien un nombre ici
+      console.log('hAutorisation:', this.congesInfo.hAutorisation);
+
+
   }
 
 
@@ -123,14 +133,23 @@ const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
   onSubmitConge(): void {
     if (!this.isDateRangeValid) {
+      // Vérification du total des congés disponibles avant soumission
+    if ((this.congesInfo.totalCongesRestants || 0) <= 0) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: 'Vous n\'avez plus de congés disponibles pour faire une demande.',
+      });
+      return;
+    }
     // alert('La date de fin ne peut pas être antérieure à la date de début.');
 
 
-Swal.fire({
-  icon: "error",
-  title: "Oops...",
-  text: "La date de fin ne peut pas être antérieure à la date de début.",
-});
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "La date de fin ne peut pas être antérieure à la date de début.",
+    });
     return;
   }
   if (!this.isDateFinValid) {
@@ -216,24 +235,32 @@ if (!this.congeForm.dateFinMatin && !this.congeForm.dateFinApresMidi) {
     };
 
     // Envoyer la demande au backend avec le matricule
-    this.congeService.createConge(congeRequest, matricule).subscribe({
-      next: (response) => {
-        console.log('Congé créé avec succès:', response);
-        // alert('Demande de congé soumise avec succès!');
+    
 
-                  Swal.fire({
-  icon: "success",
-  title: "Message",
-  text: "Demande de congé soumise avec succès!",
-});
-        this.hideAllForms();
-        this.resetForm();
-      },
-      error: (error) => {
-        console.error('Erreur lors de la création du congé:', error);
-        alert('Erreur lors de la soumission de la demande. Veuillez réessayer.');
-      }
-    });
+    this.congeService.createConge(congeRequest, matricule).subscribe({
+    next: (response) => {
+      console.log('Congé créé avec succès:', response);
+      Swal.fire({
+        icon: "success",
+        title: "Message",
+        text: "Demande de congé soumise avec succès!",
+      });
+      this.hideAllForms();
+      this.resetForm();
+    },
+    error: (error) => {
+      console.error('Erreur lors de la création du congé:', error);
+
+      // Récupération du message précis du backend (si disponible)
+      const errorMsg = error?.error?.message || 'Vous ne pouvez pas faire de demande de congé.<br> Congés restants = 0.<br> Ou <br> Congés demandes > Congé Restant';
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        html: errorMsg,
+      });
+    }
+  });
   }
 
   private resetForm(): void {
@@ -251,50 +278,88 @@ if (!this.congeForm.dateFinMatin && !this.congeForm.dateFinApresMidi) {
   }
 
   onSubmitAutorisation(): void {
-    console.log('Demande d\'autorisation:', this.autorisationForm);
-    
-    // Récupérer le matricule depuis le token
-    const matricule = this.authService.getUserMatricule();
-    
-    if (!matricule) {
-      alert('Erreur: Matricule utilisateur non trouvé. Veuillez vous reconnecter.');
+  console.log('Demande d\'autorisation:', this.autorisationForm);
+
+  const matricule = this.authService.getUserMatricule();
+
+  if (!matricule) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Erreur',
+      text: 'Matricule utilisateur non trouvé. Veuillez vous reconnecter.'
+    });
+    return;
+  }
+
+  // ✅ Vérifier les heures disponibles avant d'envoyer la requête
+  // ✅ Ne pas bloquer la demande si motif est "Service"
+  if (this.autorisationForm.motif !== 'Service' && this.congesInfo.hAutorisation <= 0) {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Vous n'avez plus d'heures d'autorisation disponibles."
+    });
+    return;
+  }
+
+
+  if (this.autorisationForm.motif !== 'Service') {
+    const dureeDemandee = parseInt(this.autorisationForm.duree, 10);
+    if (this.congesInfo.hAutorisation < dureeDemandee) {
+      Swal.fire({
+        icon: "error",
+        title: "Heures insuffisantes",
+        text: "Vous dépassez votre quota d'heures restantes."
+      });
       return;
     }
-    
-    // Créer l'objet Autorisation pour l'API
-    const autorisationRequest: Autorisation = {
-      motif: this.autorisationForm.motif,
-      dateSortie: `${this.autorisationForm.dateSortie}T${this.autorisationForm.heureSortie}:00`, // Format ISO
-      duree: this.autorisationForm.duree,
-      description: this.autorisationForm.description
-    };
-
-    // Envoyer la demande au backend avec le matricule
-    this.autorisationService.create(autorisationRequest, matricule).subscribe({
-      next: (response) => {
-        console.log('Autorisation créée avec succès:', response);
-        // alert('Demande d\'autorisation soumise avec succès!');
-
-          Swal.fire({
-  icon: "success",
-  title: "Message",
-  text: "Demande d\'autorisation soumise avec succès!",
-});
-        this.hideAllForms();
-        this.resetAutorisationForm();
-      },
-      error: (error) => {
-        console.error('Erreur lors de la création de l\'autorisation:', error);
-        alert('Erreur lors de la soumission de la demande. Veuillez réessayer.');
-      }
-    });
   }
+
+  // ✅ Construire l’objet autorisation
+  const autorisationRequest: Autorisation = {
+    motif: this.autorisationForm.motif,
+    dateSortie: `${this.autorisationForm.dateSortie}T${this.autorisationForm.heureSortie}:00`,
+    duree: this.autorisationForm.duree,
+    description: this.autorisationForm.description
+  };
+
+  // ✅ Envoyer la requête
+  this.autorisationService.create(autorisationRequest, matricule).subscribe({
+    next: (response) => {
+      console.log('Autorisation créée avec succès:', response);
+      Swal.fire({
+        icon: "success",
+        title: "Message",
+        text: "Demande d'autorisation soumise avec succès!",
+      });
+      this.hideAllForms();
+      this.resetAutorisationForm();
+    },
+    error: (error) => {
+      console.error('Erreur lors de la création de l\'autorisation:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: 'Une erreur est survenue lors de la demande.'
+      });
+    }
+  });
+}
+
+
+
+
+
+
+
+
+
 
   private resetAutorisationForm(): void {
     this.autorisationForm = {
       dateSortie: '',
       heureSortie: '',
-      duree: '',
+      duree: '0',
       motif: '',
       description: ''
     };
@@ -308,6 +373,16 @@ if (!this.congeForm.dateFinMatin && !this.congeForm.dateFinApresMidi) {
   return this.congeForm.dateFinMatin || this.congeForm.dateFinApresMidi;
   }
 
+
+
+  convertMinutesToHM(minutes: number | null | undefined): string {
+  if (minutes == null || isNaN(minutes)) {
+    return '0h 0min';  // valeur par défaut
+  }
+  const heures = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return `${heures}h ${mins}min`;
+}
 
 
 

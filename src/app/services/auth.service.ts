@@ -97,7 +97,8 @@ export class AuthService {
     return {
       congesRestants: user?.congesRestants || 0,
       congesPris: user?.congesPris || 0,
-      congesAnnuelsRestants: user?.congesAnnuelsRestants || 0
+      congesAnnuelsRestants: user?.congesAnnuelsRestants || 0,
+      hAutorisation: user?.hAutorisation || 0
     };
   }
 

@@ -18,27 +18,29 @@
           <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
           Validation
         </a>
-
-        <div class="sb-sidenav-menu-heading">Interface</div>
-        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages">
-          <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-          Pages
-          <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-        </a>
-        <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
-          <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-            <a class="nav-link collapsed" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth">
-              Authentication
-              <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-            </a>
-            <div class="collapse" id="pagesCollapseAuth" data-bs-parent="#sidenavAccordionPages">
-              <nav class="sb-sidenav-menu-nested nav">
-                <a class="nav-link" routerLink="/login">Login</a>
-                <a class="nav-link" routerLink="/register">Register</a>
+        
+          <!--
+          <div class="sb-sidenav-menu-heading">Interface</div>
+          <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages">
+            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+            Pages
+            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+          </a>
+            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+              <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                <a class="nav-link collapsed" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth">
+                  Authentication
+                  <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="pagesCollapseAuth" data-bs-parent="#sidenavAccordionPages">
+                  <nav class="sb-sidenav-menu-nested nav">
+                    <a class="nav-link" routerLink="/login">Login</a>
+                    <a class="nav-link" routerLink="/register">Register</a>
+                  </nav>
+                </div>
               </nav>
             </div>
-          </nav>
-        </div>
+            -->
       </div>
     </div>
   </nav>
@@ -66,8 +68,21 @@
               <h5 class="mb-3">Résumé des congés - {{ userDisplayName }}</h5>
               <div class="p-3" style="background-color: #f8f9fa; border-radius: 10px;">
                 <div class="mb-2"><strong>NB Congé pris :</strong> <span class="text-success">{{ congesInfo.congesPris }}J</span></div>
-                <div class="mb-2"><strong>NB Congé restant :</strong> <span class="text-success">{{ congesInfo.congesRestants }}J</span></div>
+            <!--    <div class="mb-2"><strong>NB Congé restant :</strong> <span class="text-success">{{ congesInfo.congesRestants }}J</span></div>  -->
+                <div class="mb-2"><strong>Total congés disponibles :</strong> <span class="text-success">{{ congesInfo.totalCongesRestants }}J</span></div>
+
                 <div class="mb-2"><strong>NB Congé de l'année précédente :</strong> <span class="text-success">{{ congesInfo.congesAnnuelsRestants }}J</span></div>
+<br>
+                <div class="mb-2"><strong>NB Heures d'autorisation par mois :</strong> <span class="text-success">6H</span></div>
+                
+                <div class="mb-2">
+                  <strong>NB Heures d'autorisation restantes :</strong>
+                  <span class="text-success">
+                    {{ convertMinutesToHM(congesInfo.hAutorisation) }}
+                  </span>
+                </div>
+
+
               </div>
               
            <br>
@@ -289,6 +304,7 @@
                     </div>
                     
                     <div class="row">
+                      <!--
                       <div class="col-md-6">
                         <div class="form-floating mb-3">
                           <select 
@@ -307,6 +323,25 @@
                           <label for="duree">Durée</label>
                         </div>
                       </div>
+                        -->
+
+                      <div class="col-md-6">
+  <div class="form-floating mb-3">
+    <input 
+      class="form-control" 
+      type="number"
+      min="1"
+      max="240"
+      id="duree"
+      [(ngModel)]="autorisationForm.duree"
+      name="duree"
+      required />
+    <label for="duree">Durée en minutes</label>
+  </div>
+</div>
+
+
+
                       <div class="col-md-6">
                         <div class="form-floating mb-3">
 

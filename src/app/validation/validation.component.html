@@ -10,36 +10,49 @@
             <table class="table table-bordered table-hover">
               <thead class="table-light text-center">
                 <tr>
-                  <th>Nom</th>
+                  <th>Demandeur</th>
+                  <th>Validateur</th>
                   <th>Type</th>
                   <th>Durée</th>
                   <th>Statut</th>
                   <th>Action</th>
                 </tr>
               </thead>
+
               <tbody class="text-center">
-                <tr *ngFor="let demande of demandes">
-                  <td>{{ demande.nom }}</td>
-                  <td>{{ demande.type }}</td>
-                  <td>{{ demande.duree }}</td>
+                <tr *ngFor="let validation of validations">
+                  <td>{{ validation.nomDemandeur }}</td>
+                  <td>{{ validation.validateurNom }}</td>
+                  <td>{{ validation.type }}</td>
+                  <td>{{ validation.duree }}</td>
+                  <td class="align-middle text-center">
+  <span class="badge px-2 py-1 small" [ngClass]="getStatutClass(validation.statut)">
+    <i *ngIf="validation.statut === 'APPROUVE'" class="fas fa-check-circle me-1"></i>
+    <i *ngIf="validation.statut === 'REJETE'" class="fas fa-times-circle me-1"></i>
+    <i *ngIf="validation.statut === 'EN_ATTENTE'" class="fas fa-hourglass-half me-1"></i>
+    {{ validation.statut === 'APPROUVE' ? 'Acceptée' :
+       validation.statut === 'REJETE' ? 'Rejetée' : 'En attente' }}
+  </span>
+</td>
+
                   <td>
-                    <span [ngClass]="{
-                      'badge bg-warning text-dark': demande.statut === 'En cours',
-                      'badge bg-success': demande.statut === 'Acceptée',
-                      'badge bg-danger': demande.statut === 'Rejetée'
-                    }">
-                      {{ demande.statut }}
-                    </span>
-                  </td>
-                  <td>
-                    <button *ngIf="demande.statut === 'En cours'" class="btn btn-sm btn-primary"
-                            (click)="openDetails(demande)">
+                    <button *ngIf="validation.statut === 'EN_ATTENTE'" class="btn btn-sm btn-primary"
+                            (click)="openDetails(validation)">
                       Détails
                     </button>
                   </td>
+                  
                 </tr>
               </tbody>
             </table>
+            <div *ngIf="validations.length === 0" class="alert alert-info mt-3 text-center">
+              Aucune validation en attente.
+            </div>
+
+            
+            
+
+
           </div>
         </div>
       </div>
@@ -57,12 +70,40 @@
         <h5 class="modal-title">Valider ou rejeter la demande</h5>
         <button type="button" class="btn-close" (click)="selectedDemande = null"></button>
       </div>
+
       <div class="modal-body">
-        <p><strong>Nom :</strong> {{ selectedDemande.nom }}</p>
-        <p><strong>Type :</strong> {{ selectedDemande.type }}</p>
-        <p><strong>Durée :</strong> {{ selectedDemande.duree }}</p>
-        <textarea class="form-control" [(ngModel)]="description" placeholder="Ajouter une remarque..." rows="3"></textarea>
-      </div>
+  <p><strong>Nom :</strong> {{ selectedDemande.nomDemandeur }}</p>
+  <p><strong>Type :</strong> {{ selectedDemande.type }}</p>
+  <p><strong>Durée :</strong> {{ selectedDemande.duree }}</p>
+
+  <!-- ✅ Si c'est une autorisation -->
+  <div *ngIf="selectedDemande.type === 'Autorisation'">
+    <p><strong>Motif :</strong> {{ selectedDemande.original.idDemande.autorisation?.motif }}</p>
+    <p><strong>Date de sortie :</strong> {{ selectedDemande.original.idDemande.autorisation?.dateSortie | date: 'dd/MM/yyyy HH:mm' }}</p>
+    <p><strong>Description :</strong> {{ selectedDemande.original.idDemande.autorisation?.description }}</p>
+  </div>
+
+  <!-- ✅ Si c'est un congé -->
+  <div *ngIf="selectedDemande.type === 'Congé'">
+    <p><strong>Date de début :</strong>
+    {{ selectedDemande.original.idDemande.conge?.dateDebut?.date | date: 'dd/MM/yyyy' }}
+    ({{ selectedDemande.original.idDemande.conge?.dateDebut?.matin ? 'Matin' : '' }}
+     {{ selectedDemande.original.idDemande.conge?.dateDebut?.apresMidi ? 'Après-midi' : '' }})
+  </p>
+
+    <p><strong>Date de fin :</strong>
+    {{ selectedDemande.original.idDemande.conge?.dateFin?.date | date: 'dd/MM/yyyy' }}
+    ({{ selectedDemande.original.idDemande.conge?.dateFin?.matin ? 'Matin' : '' }}
+     {{ selectedDemande.original.idDemande.conge?.dateFin?.apresMidi ? 'Après-midi' : '' }})
+  </p>
+
+  </div>
+
+  <textarea class="form-control mt-3" [(ngModel)]="description" placeholder="Ajouter une remarque..." rows="3"></textarea>
+</div>
+
+
+
       <div class="modal-footer">
         <button class="btn btn-success" (click)="validerDemande()">Accepter</button>
         <button class="btn btn-danger" (click)="rejeterDemande()">Rejeter</button>

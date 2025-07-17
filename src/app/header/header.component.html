@@ -22,6 +22,42 @@
 
   <!-- Navbar-->
   <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4" *ngIf="isAuthenticated()">
+
+    
+      <li class="nav-item dropdown me-3">
+  <a class="nav-link position-relative" id="notifDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="fas fa-bell fa-lg"></i>
+    <span *ngIf="validationsEnAttente.length > 0"
+          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+      {{ validationsEnAttente.length }}
+      <span class="visually-hidden">nouvelles notifications</span>
+    </span>
+  </a>
+
+  <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="notifDropdown" style="min-width: 250px;">
+    <li class="dropdown-header fw-bold text-primary">Notifications</li>
+
+    <li *ngIf="validationsEnAttente.length === 0" class="dropdown-item text-muted fst-italic">
+      Aucune nouvelle demande
+    </li>
+
+    <li *ngFor="let v of validationsEnAttente">
+      <a class="dropdown-item d-flex justify-content-between align-items-center"
+         (click)="goToValidation(v.id)" style="cursor: pointer;">
+        <div>
+          <div><strong>Demande {{ v.idDemande?.conge ? 'Congé' : 'Autorisation' }}</strong></div>
+          <small class="text-muted">À valider</small>
+        </div>
+        <i class="fas fa-chevron-right text-secondary"></i>
+      </a>
+    </li>
+  </ul>
+</li>
+
+
+
+
+
       <a class="nav-link" routerLink="/">
         {{ userDisplayName }}
       </a>
