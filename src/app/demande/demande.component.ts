@@ -182,27 +182,7 @@ return;
       return dateString;
     }
   }
-/*
-  getStatutClass(statut: string | undefined): string {
-    if (!statut) return 'badge bg-secondary';
-    
-    switch (statut.toLowerCase()) {
-      case 'acceptée':
-      case 'accepté':
-      case 'approuvé':
-        return 'badge bg-success';
-      case 'en cours':
-      case 'en attente':
-      case 'pending':
-        return 'badge bg-warning';
-      case 'rejetée':
-      case 'rejeté':
-      case 'refusé':
-        return 'badge bg-danger';
-      default:
-        return 'badge bg-secondary';
-    }
-  }*/
+
 
   refreshDemandes(): void {
     this.loadDemandes();
