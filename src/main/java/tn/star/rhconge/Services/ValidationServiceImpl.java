@@ -17,6 +17,11 @@ public class ValidationServiceImpl implements ValidationService {
     @Autowired
     private EmailService emailService;
 
+
+    @Autowired
+    private AsynchronizedTasks asynchronizedTasks;
+
+
     @Autowired
     public ValidationServiceImpl(ValidationRepository validationRepository) {
         this.validationRepository = validationRepository;
@@ -46,7 +51,7 @@ public class ValidationServiceImpl implements ValidationService {
             User demandeur = saved.getIdDemande().getMatriculeDemandeur();
             String decision = saved.getApprouve() != null && saved.getApprouve() ? "APPROUVÉE" : "REFUSÉE";
 
-            emailService.sendEmail(
+            asynchronizedTasks.sendEmail(
                     demandeur.getEmail(),
                     "Mise à jour de votre demande d'autorisation",
                     "Bonjour " + demandeur.getPrenom() + ",\n\n" +

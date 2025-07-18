@@ -30,6 +30,9 @@ public class AutorisationServiceImpl implements AutorisationService {
     private ValidationService validationService;
     @Autowired
     private EmailService emailService;
+    
+    @Autowired
+    private AsynchronizedTasks asynchronizedTasks;
 
 
 
@@ -74,7 +77,7 @@ public class AutorisationServiceImpl implements AutorisationService {
             validationService.createValidation(v1);
             nbValidateurs++;
             // Envoi d'email au manager1
-            emailService.sendEmail(
+            asynchronizedTasks.sendEmail(
                     manager1.getEmail(),
                     "Nouvelle demande d'autorisation",
                     "Bonjour " + manager1.getPrenom() + ",\n\n" +
@@ -96,7 +99,7 @@ public class AutorisationServiceImpl implements AutorisationService {
                 validationService.createValidation(v2);
                 nbValidateurs++;
                 // Envoi d'email au manager2
-                emailService.sendEmail(
+                asynchronizedTasks.sendEmail(
                         manager2.getEmail(),
                         "Nouvelle demande d'autorisation",
                         "Bonjour " + manager2.getPrenom() + ",\n\n" +
@@ -111,7 +114,7 @@ public class AutorisationServiceImpl implements AutorisationService {
             Status accepte = statusRepository.findByNom("APPROUVE")
                     .orElseThrow(() -> new RuntimeException("Status 'APPROUVE' non trouvé"));
             // ✅ Envoi d'email au demandeur connecté
-            emailService.sendEmail(
+            asynchronizedTasks.sendEmail(
                     demandeur.getEmail(),
                     "Demande d'autorisation acceptée automatiquement",
                     "Bonjour " + demandeur.getPrenom() + ",\n\n" +

@@ -37,6 +37,10 @@ public class CongeServiceImpl implements CongeService {
 
     @Autowired
     private EmailService emailService;
+    
+    
+    @Autowired
+    private AsynchronizedTasks asynchronizedTasks;
 
     @Override
     public Conge saveConge(Conge conge, int matricule) {
@@ -88,7 +92,7 @@ public class CongeServiceImpl implements CongeService {
             validationService.createValidation(v1);
             nbValidateurs++;
             // Envoi d'email au manager1
-            emailService.sendEmail(
+            asynchronizedTasks.sendEmail(
                     manager1.getEmail(),
                     "Nouvelle demande d'autorisation",
                     "Bonjour " + manager1.getPrenom() + ",\n\n" +
@@ -107,7 +111,7 @@ public class CongeServiceImpl implements CongeService {
                 validationService.createValidation(v2);
                 nbValidateurs++;
                 // Envoi d'email au manager2
-                emailService.sendEmail(
+                asynchronizedTasks.sendEmail(
                         manager2.getEmail(),
                         "Nouvelle demande d'autorisation",
                         "Bonjour " + manager2.getPrenom() + ",\n\n" +
